@@ -4,10 +4,10 @@
    copy/run actions, project filtering, contact form validation
 ============================================================ */
 
-const PISTON_LANG_MAP = {
-  "C": "c",
-  "C++": "cpp",
-  "Python": "python"
+const REPLIT_URLS = {
+  "C": "https://replit.com/@templates/c?lite=true",
+  "C++": "https://replit.com/@templates/cpp?lite=true",
+  "Python": "https://replit.com/@templates/python3?lite=true"
 };
 
 const PRISM_LANG_MAP = {
@@ -56,14 +56,13 @@ initTheme();
 async function loadCodes() {
   try {
     const res = await fetch('data/codes.json');
-    if (!res.ok) throw new Error(`Failed to load codes.json: ${res.status}`);
+    if (!res.ok) throw new Error('Failed to load codes.json');
     allCodes = await res.json();
-    console.log('Codes loaded:', allCodes.length, 'snippets');
     renderCodeGrid();
   } catch (err) {
     console.error('Error loading codes:', err);
     const grid = document.getElementById('codeGrid');
-    grid.innerHTML = '<p class="empty-state">⚠️ Could not load code snippets. Error: ' + err.message + '</p>';
+    grid.innerHTML = '<p class="empty-state">⚠️ Could not load code snippets. Check data/codes.json</p>';
   }
 }
 
@@ -74,8 +73,6 @@ function renderCodeGrid() {
   const filtered = allCodes.filter(
     item => item.lang === currentLang && item.level === currentLevel
   );
-
-  console.log('Filtered codes:', filtered.length);
 
   if (filtered.length === 0) {
     grid.innerHTML = '<p class="empty-state">No snippets found for this category yet.</p>';
@@ -140,7 +137,6 @@ const runOutput = document.getElementById('runOutput');
 const modalClose = document.getElementById('modalClose');
 
 let activeItem = null;
-let isRunning = false;
 
 function openModal(item) {
   activeItem = item;
@@ -213,10 +209,10 @@ copyBtn.addEventListener('click', async () => {
 });
 
 /* ============================
-   RUN BUTTON LOGIC - PISTON API
+   RUN BUTTON LOGIC
 ============================ */
-runBtn.addEventListener('click', async () => {
-  if (!activeItem || isRunning) return;
+runBtn.addEventListener('click', () => {
+  if (!activeItem) return;
 
   // Python with Colab link -> open in new tab
   if (activeItem.lang === 'Python' && activeItem.colab) {
@@ -224,62 +220,12 @@ runBtn.addEventListener('click', async () => {
     return;
   }
 
-  isRunning = true;
-  const originalText = runBtn.textContent;
-  runBtn.textContent = '⏳ Running...';
-  runBtn.disabled = true;
-
-  try {
-    const language = PISTON_LANG_MAP[activeItem.lang];
-    if (!language) {
-      throw new Error(`Language "${activeItem.lang}" not supported`);
-    }
-
-    const response = await fetch('https://emkc.org/api/v2/execute', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        language: language,
-        version: '*',
-        files: [
-          {
-            name: activeItem.filename,
-            content: activeItem.code
-          }
-        ]
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
-    const output = result.run.output || result.run.stderr || '(No output)';
-    const runtime = result.run.stdout ? '✅ Success' : '⚠️ Output';
-
-    runOutput.innerHTML = `
-      <div class="output-container">
-        <div class="output-header">${runtime}</div>
-        <pre class="output-code">${escapeHtml(output)}</pre>
-      </div>
-    `;
+  // Otherwise -> load Replit iframe inline
+  const replitUrl = REPLIT_URLS[activeItem.lang];
+  if (replitUrl) {
+    runOutput.innerHTML = `<iframe src="${replitUrl}" title="Replit Runner" allow="clipboard-write"></iframe>`;
     runOutput.classList.add('active');
     runOutput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-  } catch (err) {
-    console.error('Execution error:', err);
-    runOutput.innerHTML = `
-      <div class="output-container">
-        <div class="output-header">❌ Error</div>
-        <pre class="output-code">${escapeHtml(err.message)}</pre>
-      </div>
-    `;
-    runOutput.classList.add('active');
-  } finally {
-    isRunning = false;
-    runBtn.textContent = originalText;
-    runBtn.disabled = false;
   }
 });
 

@@ -6,23 +6,29 @@
 <title>Piyush Singh | Developer Portfolio</title>
 <meta name="description" content="Piyush Singh - BCA Student, Aspiring Developer specializing in C, C++ and Python">
 
+<!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
+<!-- Prism.js Theme -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
 
+<!-- Custom CSS -->
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<!-- Background Blobs -->
 <div class="bg-blobs" aria-hidden="true">
   <div class="blob blob-1"></div>
   <div class="blob blob-2"></div>
 </div>
 
+<!-- Theme Toggle -->
 <button id="themeToggle" class="theme-toggle" aria-label="Toggle dark and light mode">🌙</button>
 
+<!-- Navbar -->
 <nav class="navbar">
   <div class="nav-container">
     <a href="#home" class="nav-logo">PS<span>.</span></a>
@@ -36,6 +42,7 @@
   </div>
 </nav>
 
+<!-- Hero / About Section -->
 <header id="home" class="hero">
   <div class="hero-content glass-card">
     <p class="hero-greeting">Hello, I'm</p>
@@ -56,6 +63,7 @@
   <div class="scroll-indicator" aria-hidden="true">↓</div>
 </header>
 
+<!-- Languages Section -->
 <section id="languages" class="section">
   <h2 class="section-title gradient-text">Languages I Work With</h2>
   <p class="section-subtitle">The core technologies powering my development journey</p>
@@ -99,16 +107,19 @@
   </div>
 </section>
 
+<!-- Code Snippets Section -->
 <section id="codes" class="section">
   <h2 class="section-title gradient-text">Code Snippets</h2>
   <p class="section-subtitle">Browse my code library by language and difficulty level</p>
 
+  <!-- Language Tabs -->
   <div class="tabs lang-tabs" role="tablist">
     <button class="tab-btn active" data-lang="C">C</button>
     <button class="tab-btn" data-lang="C++">C++</button>
     <button class="tab-btn" data-lang="Python">Python</button>
   </div>
 
+  <!-- Level Sub-Tabs -->
   <div class="tabs level-tabs" role="tablist">
     <button class="subtab-btn active" data-level="basic">Basic</button>
     <button class="subtab-btn" data-level="advanced">Advanced</button>
@@ -116,9 +127,11 @@
   </div>
 
   <div id="codeGrid" class="code-grid">
-    </div>
+    <!-- Cards injected by JS -->
+  </div>
 </section>
 
+<!-- Code Modal -->
 <div id="codeModal" class="modal-overlay">
   <div class="modal glass-card">
     <div class="modal-header">
@@ -136,6 +149,7 @@
   </div>
 </div>
 
+<!-- Projects Section -->
 <section id="projects" class="section">
   <h2 class="section-title gradient-text">Projects</h2>
   <p class="section-subtitle">Things I've built while learning and experimenting</p>
@@ -147,9 +161,11 @@
   </div>
 
   <div id="projectsGrid" class="projects-grid">
-    </div>
+    <!-- Project cards injected by JS -->
+  </div>
 </section>
 
+<!-- Contact Section -->
 <section id="contact" class="section">
   <h2 class="section-title gradient-text">Get In Touch</h2>
   <p class="section-subtitle">Have a question or want to work together? Send me a message.</p>
@@ -178,6 +194,7 @@
   </form>
 </section>
 
+<!-- Footer -->
 <footer class="footer">
   <div class="footer-content glass-card">
     <div class="footer-col">
@@ -204,9 +221,14 @@
   <p class="footer-bottom">Made with ❤️ by Piyush Singh &copy; <span id="year"></span></p>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<!-- Prism.js Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
 
+<!-- Custom JS -->
 <script src="script.js"></script>
 </body>
 </html>
