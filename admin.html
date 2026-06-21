@@ -547,6 +547,10 @@
             ✅ Password: Set by you on first login<br>
             ✅ All data stored locally in your browser
         </div>
+
+        <div class="divider"><span>OR</span></div>
+
+        <button class="login-btn" style="background:#999;" onclick="loginAsGuest()">👀 Continue as Guest (view only)</button>
     </div>
 </div>
 
@@ -668,14 +672,16 @@
 
     function checkAuth() {
         const auth = localStorage.getItem('adminAuth');
-        const password = localStorage.getItem('adminPassword');
-        
+        const guest = sessionStorage.getItem('guestMode');
+
         if (auth === 'true') {
             showPanel();
             loadFromLocalStorage();
             renderCodeList();
             updateStats();
             updateUserInfo();
+        } else if (guest === 'true') {
+            enterGuestMode();
         } else {
             showLogin();
         }
@@ -691,46 +697,46 @@
         document.getElementById('panelContainer').classList.add('active');
     }
 
-    function loginWithGitHub() {
-        // For GitHub OAuth, you need to set up an OAuth app
-        // For now, we'll use a simpler approach with token verification
-        const token = prompt('🔐 GitHub Personal Access Token:\n\n(Create one at: https://github.com/settings/tokens)\n\nRequires: repo scope');
-        
-        if (!token) return;
+    function loginAsGuest() {
+        sessionStorage.setItem('guestMode', 'true');
+        enterGuestMode();
+        showMessage('👀 Browsing as guest — changes can\'t be saved', 'info');
+    }
 
-        // Verify token by fetching user info
-        fetch('https://api.github.com/user', {
-            headers: {
-                'Authorization': `token ${token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            }
-        })
-        .then(res => {
-            if (res.ok) return res.json();
-            throw new Error('Invalid token');
-        })
-        .then(user => {
-            // Check if user is the repo owner
-            const repoOwner = 'piyushsingh08112005-cmd';
-            if (user.login === repoOwner || user.login === 'piyushsingh08112005-cmd') {
-                localStorage.setItem('adminAuth', 'true');
-                localStorage.setItem('authMethod', 'github');
-                localStorage.setItem('githubUser', JSON.stringify(user));
-                localStorage.setItem('githubToken', token);
-                currentUser = user;
-                showPanel();
-                loadFromLocalStorage();
-                renderCodeList();
-                updateStats();
-                updateUserInfo();
-                showMessage('✅ GitHub authentication successful!', 'success');
-            } else {
-                showMessage('❌ Only the repository owner can access this panel', 'error');
-            }
-        })
-        .catch(err => {
-            showMessage('❌ GitHub authentication failed: ' + err.message, 'error');
+    function enterGuestMode() {
+        showPanel();
+        loadFromLocalStorage();
+        renderCodeList();
+        updateStats();
+        updateUserInfo();
+        applyGuestRestrictions();
+    }
+
+    function isGuest() {
+        return sessionStorage.getItem('guestMode') === 'true';
+    }
+
+    function applyGuestRestrictions() {
+        if (!isGuest()) return;
+
+        // Disable the "Add New Code" form
+        document.querySelectorAll('#panelContainer form').forEach(f => {
+            f.querySelectorAll('input, textarea, select, button').forEach(el => el.disabled = true);
         });
+
+        // Disable destructive / write quick-action buttons
+        document.querySelectorAll('.export-import .button-group .btn').forEach(btn => {
+            if (!btn.textContent.includes('Export') && !btn.textContent.includes('Template')) {
+                btn.disabled = true;
+            }
+        });
+
+        document.getElementById('importFile').disabled = true;
+    }
+
+    function loginWithGitHub() {
+        // Hand off to the dedicated authorize.html page for token entry & verification
+        window.location.href = 'authorize.html';
     }
 
     function loginWithPassword(e) {
@@ -774,7 +780,9 @@
         const authMethod = localStorage.getItem('authMethod');
         const userInfo = document.getElementById('userInfo');
 
-        if (authMethod === 'github') {
+        if (isGuest()) {
+            userInfo.textContent = '👀 Guest Mode (view only)';
+        } else if (authMethod === 'github') {
             const user = JSON.parse(localStorage.getItem('githubUser') || '{}');
             userInfo.innerHTML = `
                 <img src="${user.avatar_url}" class="user-avatar" alt="avatar">
@@ -788,6 +796,7 @@
     function logout() {
         if (confirm('Are you sure you want to logout?')) {
             localStorage.removeItem('adminAuth');
+            sessionStorage.removeItem('guestMode');
             currentUser = null;
             document.getElementById('password').value = '';
             showLogin();
@@ -819,6 +828,7 @@
     }
 
     function addCode(e) {
+        if (isGuest()) { e.preventDefault(); showMessage('👀 Guests can\'t add code. Please log in.', 'error'); return; }
         e.preventDefault();
 
         const newCode = {
@@ -871,6 +881,7 @@
     }
 
     function deleteCode(index) {
+        if (isGuest()) { showMessage('👀 Guests can\'t delete code. Please log in.', 'error'); return; }
         if (confirm('Are you sure you want to delete this code?')) {
             allCodes.splice(index, 1);
             saveToLocalStorage();
@@ -881,6 +892,7 @@
     }
 
     function editCode(index) {
+        if (isGuest()) { showMessage('👀 Guests can\'t edit code. Please log in.', 'error'); return; }
         const code = allCodes[index];
         document.getElementById('title').value = code.title;
         document.getElementById('filename').value = code.filename;
@@ -909,6 +921,7 @@
     }
 
     function importJSON(event) {
+        if (isGuest()) { showMessage('👀 Guests can\'t import data. Please log in.', 'error'); return; }
         const file = event.target.files[0];
         if (!file) return;
 
@@ -959,6 +972,7 @@
     }
 
     function clearAll() {
+        if (isGuest()) { showMessage('👀 Guests can\'t clear data. Please log in.', 'error'); return; }
         if (confirm('⚠️ This will delete ALL code snippets. Are you sure?')) {
             allCodes = [];
             saveToLocalStorage();

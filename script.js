@@ -155,7 +155,7 @@ function openModal(item) {
   if (item.lang === 'Python' && item.colab) {
     runBtn.textContent = 'Open in Colab 🚀';
   } else {
-    runBtn.textContent = '▶ Run Code';
+    runBtn.textContent = '▶ Run on Replit ↗';
   }
 
   codeModal.classList.add('active');
@@ -220,12 +220,10 @@ runBtn.addEventListener('click', () => {
     return;
   }
 
-  // Otherwise -> load Replit iframe inline
+  // Otherwise -> open Replit in a new tab (no more inline iframe runner)
   const replitUrl = REPLIT_URLS[activeItem.lang];
   if (replitUrl) {
-    runOutput.innerHTML = `<iframe src="${replitUrl}" title="Replit Runner" allow="clipboard-write"></iframe>`;
-    runOutput.classList.add('active');
-    runOutput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    window.open(replitUrl, '_blank', 'noopener');
   }
 });
 
