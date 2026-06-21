@@ -56,13 +56,14 @@ initTheme();
 async function loadCodes() {
   try {
     const res = await fetch('data/codes.json');
-    if (!res.ok) throw new Error('Failed to load codes.json');
+    if (!res.ok) throw new Error(`Failed to load codes.json: ${res.status}`);
     allCodes = await res.json();
+    console.log('Codes loaded:', allCodes.length, 'snippets');
     renderCodeGrid();
   } catch (err) {
     console.error('Error loading codes:', err);
     const grid = document.getElementById('codeGrid');
-    grid.innerHTML = '<p class="empty-state">⚠️ Could not load code snippets. Check data/codes.json</p>';
+    grid.innerHTML = '<p class="empty-state">⚠️ Could not load code snippets. Error: ' + err.message + '</p>';
   }
 }
 
@@ -73,6 +74,8 @@ function renderCodeGrid() {
   const filtered = allCodes.filter(
     item => item.lang === currentLang && item.level === currentLevel
   );
+
+  console.log('Filtered codes:', filtered.length);
 
   if (filtered.length === 0) {
     grid.innerHTML = '<p class="empty-state">No snippets found for this category yet.</p>';
