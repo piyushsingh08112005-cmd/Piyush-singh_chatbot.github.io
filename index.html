@@ -159,3 +159,54 @@
       <label for="name">Name</label>
       <input type="text" id="name" name="name" placeholder="Your name" required>
       <span class="error-msg" id="nameError"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" required>
+      <span class="error-msg" id="emailError"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="5" placeholder="Your message..." required></textarea>
+      <span class="error-msg" id="messageError"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary form-submit">Send Message</button>
+    <p id="formSuccess" class="form-success"></p>
+  </form>
+</section>
+
+<footer class="footer">
+  <div class="footer-content glass-card">
+    <div class="footer-col">
+      <h3 class="footer-logo gradient-text">Piyush Singh</h3>
+      <p>BCA 2nd Semester Student | Aspiring Developer | Code Enthusiast</p>
+      <div class="footer-socials">
+        <a href="mailto:piyushsingh08112005@gmail.com" target="_blank" rel="noopener">✉️ Email</a>
+        <a href="https://github.com/piyushsingh08112005-cmd" target="_blank" rel="noopener">🐙 GitHub</a>
+        <a href="https://linkedin.com" target="_blank" rel="noopener">💼 LinkedIn</a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>How to Add New Code</h4>
+      <ol class="footer-instructions">
+        <li>Create a file in <code>codes/&lt;lang&gt;/&lt;level&gt;/</code></li>
+        <li>Copy your code content</li>
+        <li>Add a new object to <code>data/codes.json</code></li>
+        <li>For Python Expert, add a <code>"colab"</code> link field</li>
+        <li>Commit & push to GitHub</li>
+      </ol>
+    </div>
+  </div>
+  <p class="footer-bottom">Made with ❤️ by Piyush Singh &copy; <span id="year"></span></p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+<script src="script.js"></script>
+</body>
+</html>
