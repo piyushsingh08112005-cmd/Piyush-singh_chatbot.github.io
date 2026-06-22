@@ -15,11 +15,7 @@
 const JUDGE0_URL = "https://judge0-ce.p.rapidapi.com";
 // Sign up free at rapidapi.com/judge0-official/api/judge0-ce for a key.
 // Leave blank to use the unauthenticated mirror below instead.
-const RAPIDAPI_KEY = "curl --request GET \
-	--url 'https://judge029.p.rapidapi.com/submissions/1df59684-e5e7-4ce1-9975-ff732823e37e?base64_encoded=true&fields=*' \
-	--header 'Content-Type: application/json' \
-	--header 'x-rapidapi-host: judge029.p.rapidapi.com' \
-	--header 'x-rapidapi-key: fba8da6635mshf6fb671e715ab9bp1e2ad7jsn388327de6741'";   // optional – paste your RapidAPI key here if you have one
+const RAPIDAPI_KEY = "fba8da6635mshf6fb671e715ab9bp1e2ad7jsn388327de6741'";   // optional – paste your RapidAPI key here if you have one
 
 // Fallback: public mirror that needs no key (rate-limited but works for demos)
 const JUDGE0_MIRROR = "https://api.judge0.com";
