@@ -15,7 +15,7 @@
 const JUDGE0_URL = "https://judge0-ce.p.rapidapi.com";
 // Sign up free at rapidapi.com/judge0-official/api/judge0-ce for a key.
 // Leave blank to use the unauthenticated mirror below instead.
-const RAPIDAPI_KEY = "fba8da6635mshf6fb671e715ab9bp1e2ad7jsn388327de6741'";   // optional – paste your RapidAPI key here if you have one
+const RAPIDAPI_KEY = "";  // Paste your RapidAPI key here (get free key at rapidapi.com/judge0-official)
 
 // Fallback: public mirror that needs no key (rate-limited but works for demos)
 const JUDGE0_MIRROR = "https://api.judge0.com";
@@ -553,10 +553,10 @@ const FALLBACK_CODES = [
   // ── Python Expert ──
   { title: "NumPy Statistics", filename: "numpy_stats.py", lang: "Python", level: "expert",
     code: `import numpy as np\n\ndata = np.array([23, 45, 12, 67, 34, 89, 56, 41, 78, 29])\n\nprint(f"Mean:   {np.mean(data):.2f}")\nprint(f"Median: {np.median(data):.2f}")\nprint(f"Std:    {np.std(data):.2f}")\nprint(f"Min:    {np.min(data)}")\nprint(f"Max:    {np.max(data)}")\n\n# Normalize\nnorm = (data - np.min(data)) / (np.max(data) - np.min(data))\nprint("Normalized:", np.round(norm, 2))`,
-    colab: "https://colab.research.google.com/drive/sample" },
+    colab: "" },
   { title: "Pandas Data Analysis", filename: "pandas_analysis.py", lang: "Python", level: "expert",
     code: `import pandas as pd\n\ndata = {\n    "Name": ["Alice", "Bob", "Charlie", "Diana", "Eve"],\n    "Age": [25, 30, 35, 28, 22],\n    "Score": [85, 90, 78, 92, 88],\n    "Grade": ["B", "A", "C", "A", "B"]\n}\n\ndf = pd.DataFrame(data)\nprint(df)\nprint("\\nAverage Score:", df["Score"].mean())\nprint("Top scorers:\\n", df[df["Score"] >= 88][["Name","Score"]])`,
-    colab: "https://colab.research.google.com/drive/sample" }
+    colab: "" }
 ];
 
 
