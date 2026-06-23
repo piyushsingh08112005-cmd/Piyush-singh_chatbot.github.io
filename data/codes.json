@@ -76,5 +76,75 @@
     "level": "expert",
     "code": "import pandas as pd\n\n# Create a DataFrame\ndata = {\n    'Name': ['Alice', 'Bob', 'Charlie'],\n    'Age': [25, 30, 35],\n    'Score': [85, 90, 78]\n}\ndf = pd.DataFrame(data)\n\n# Display and filter\nprint(df)\nprint(df[df['Score'] > 80])",
     "colab": "https://colab.research.google.com/notebook"
+  },
+  [
+  {
+    "title":"Student Management System",
+    "lang":"Python",
+    "filename":"student_management_system.ipynb",
+    "colab":"https://colab.research.google.com/github/YOUR_USERNAME/YOUR_REPO/blob/main/projects/student_management_system.ipynb"
+  },
+
+  {
+    "title":"To Do App",
+    "lang":"Python",
+    "filename":"to_do_app.ipynb",
+    "colab":"https://colab.research.google.com/github/YOUR_USERNAME/YOUR_REPO/blob/main/projects/to_do_app.ipynb"
+  },
+
+  {
+    "title":"News Web Scraper",
+    "lang":"Python",
+    "filename":"news_web_scraper.ipynb",
+    "colab":"https://colab.research.google.com/github/YOUR_USERNAME/YOUR_REPO/blob/main/projects/news_web_scraper.ipynb"
+  },
+
+  {
+    "title":"Movie Recommendation System",
+    "lang":"Python",
+    "filename":"movie_recommendation_system.ipynb",
+    "colab":"https://colab.research.google.com/github/YOUR_USERNAME/YOUR_REPO/blob/main/projects/movie_recommendation_system.ipynb"
+  },
+
+  {
+    "title":"Expense Tracker",
+    "lang":"Python",
+    "filename":"expense_tracker.ipynb",
+    "colab":""
+  },
+
+  {
+    "title":"Weather App",
+    "lang":"Python",
+    "filename":"weather_app.ipynb",
+    "colab":""
+  },
+
+  {
+    "title":"QR Code Generator",
+    "lang":"Python",
+    "filename":"qr_code_generator.ipynb",
+    "colab":""
+  },
+
+  {
+    "title":"Spam Email Classifier",
+    "lang":"Python",
+    "filename":"spam_email_classifier.ipynb",
+    "colab":""
+  },
+
+  {
+    "title":"Sentiment Analysis",
+    "lang":"Python",
+    "filename":"sentiment_analysis.ipynb",
+    "colab":""
+  },
+
+  {
+    "title":"House Price Prediction",
+    "lang":"Python",
+    "filename":"house_price_prediction.ipynb",
+    "colab":""
   }
 ]
