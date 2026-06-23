@@ -11,15 +11,15 @@
 //  8. Footer year auto-filled.
 // ============================================================
 
-// ── Piston API – free, no key, reliable ──────────────────────────────────────
-// Docs: https://github.com/engineer-man/piston
-const PISTON_URL = "https://emkc.org/api/v2/piston/execute";
+// ── Wandbox API – free, no key, CORS-friendly, works from any browser ────────
+// Docs: https://github.com/melpon/wandbox/blob/master/kennel/API.rst
+const WANDBOX_URL = "https://wandbox.org/api/compile.json";
 
-// Piston language/version map
-const PISTON_LANGS = {
-  C:      { language: "c",      version: "10.2.0" },
-  "C++":  { language: "c++",    version: "10.2.0" },
-  Python: { language: "python", version: "3.10.0" }
+// Wandbox compiler names
+const WANDBOX_COMPILERS = {
+  C:      "gcc-head-c",
+  "C++":  "gcc-head",
+  Python: "cpython-3.12.0"
 };
 
 // ── Judge0 CE (RapidAPI) – optional fallback if you have a key ───────────────
@@ -36,58 +36,71 @@ const LANG_IDS = {
 // ── All code snippets (merged + enriched from data/codes.json) ────────────────
 let allCodes = [];
 
+// ── Helper: build "Run Online" URL per language ───────────────────────────────
+// Python → Google Colab (new notebook)
+// C / C++ → OnlineGDB (pre-filled with language)
+function getRunUrl(lang, colab, onlinegdb) {
+  if (colab)     return colab;
+  if (onlinegdb) return onlinegdb;
+  if (lang === "Python") return "https://colab.research.google.com/#create=true";
+  if (lang === "C++")    return "https://www.onlinegdb.com/online_c++_compiler";
+  if (lang === "C")      return "https://www.onlinegdb.com/online_c_compiler";
+  return null;
+}
+
 // ── Projects data ─────────────────────────────────────────────────────────────
 const projects = [
   // ── HOW TO ADD A PROJECT ──────────────────────────────────────────────────
-  // Copy one block below and fill in your details:
-  //   title   : "Your Project Name"
-  //   desc    : "What the project does"
-  //   lang    : "C" | "C++" | "Python"   ← used by the filter buttons
-  //   tags    : ["tag1", "tag2"]          ← shown as badges on the card
-  //   github  : "https://github.com/yourname/repo"   ← optional
-  //   demo    : "https://your-live-demo.com"          ← optional
+  // Add a `colab` field for Python projects with a real Colab link, or
+  // leave blank to auto-open a new Colab notebook / OnlineGDB tab.
   // ─────────────────────────────────────────────────────────────────────────
   {
     title: "Student Grade Calculator",
     desc: "A C++ console application that calculates student grades, GPA and generates report cards using OOP principles.",
     lang: "C++",
     tags: ["OOP", "Console", "GPA"],
-    github: "https://github.com/piyushsingh08112005-cmd"
+    github: "https://github.com/piyushsingh08112005-cmd",
+    onlinegdb: "https://www.onlinegdb.com/online_c++_compiler"
   },
   {
     title: "Number Guessing Game",
     desc: "Interactive Python game with difficulty levels, score tracking and colorful terminal output using the random module.",
     lang: "Python",
     tags: ["Game", "Random", "Terminal"],
-    github: "https://github.com/piyushsingh08112005-cmd"
+    github: "https://github.com/piyushsingh08112005-cmd",
+    colab: "https://colab.research.google.com/#create=true"
   },
   {
     title: "Linked List Visualizer",
     desc: "C program that implements singly, doubly and circular linked lists with interactive insert/delete/search operations.",
     lang: "C",
     tags: ["Data Structures", "Pointers", "Algorithms"],
-    github: "https://github.com/piyushsingh08112005-cmd"
+    github: "https://github.com/piyushsingh08112005-cmd",
+    onlinegdb: "https://www.onlinegdb.com/online_c_compiler"
   },
   {
     title: "CSV Data Analyzer",
     desc: "Python script that reads CSV files, performs statistical analysis using Pandas and plots charts with Matplotlib.",
     lang: "Python",
     tags: ["Pandas", "Data Analysis", "Matplotlib"],
-    github: "https://github.com/piyushsingh08112005-cmd"
+    github: "https://github.com/piyushsingh08112005-cmd",
+    colab: "https://colab.research.google.com/#create=true"
   },
   {
     title: "Matrix Operations Library",
     desc: "C++ library for matrix addition, subtraction, multiplication, transpose and determinant using 2D arrays.",
     lang: "C++",
     tags: ["Math", "Arrays", "Library"],
-    github: "https://github.com/piyushsingh08112005-cmd"
+    github: "https://github.com/piyushsingh08112005-cmd",
+    onlinegdb: "https://www.onlinegdb.com/online_c++_compiler"
   },
   {
     title: "Password Strength Checker",
     desc: "Python tool that evaluates password strength using regex, suggests improvements and generates secure passwords.",
     lang: "Python",
     tags: ["Security", "Regex", "Automation"],
-    github: "https://github.com/piyushsingh08112005-cmd"
+    github: "https://github.com/piyushsingh08112005-cmd",
+    colab: "https://colab.research.google.com/#create=true"
   }
 ];
 
@@ -358,34 +371,35 @@ async function runModalCode() {
   runBtn.textContent = "▶ Run Code";
 }
 
-// ── Piston runner (primary – free, no key needed) ────────────────────────────
-async function pistonRun(sourceCode, langName) {
-  const lang = PISTON_LANGS[langName];
-  if (!lang) throw new Error("Language not supported: " + langName);
+// ── Wandbox runner (primary – free, no key, CORS-friendly) ───────────────────
+async function wandboxRun(sourceCode, langName) {
+  const compiler = WANDBOX_COMPILERS[langName];
+  if (!compiler) throw new Error("Language not supported: " + langName);
 
-  const res = await fetch(PISTON_URL, {
+  const res = await fetch(WANDBOX_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      language: lang.language,
-      version:  lang.version,
-      files: [{ name: "main", content: sourceCode }]
+      compiler,
+      code: sourceCode,
+      "compiler-option-raw": langName === "C" ? "-std=c11" : (langName === "C++" ? "-std=c++17" : "")
     })
   });
 
-  if (!res.ok) throw new Error("Piston API error: HTTP " + res.status);
+  if (!res.ok) throw new Error("Wandbox API error: HTTP " + res.status);
   const data = await res.json();
 
-  // Piston returns { run: { stdout, stderr, code, signal } }
-  const run = data.run || {};
-  const stdout = run.stdout || "";
-  const stderr = run.stderr || "";
-  const exitCode = run.code ?? 0;
+  // Wandbox returns { program_output, program_error, compiler_error, status }
+  const stdout        = data.program_output  || "";
+  const compileError  = data.compiler_error  || "";
+  const runtimeError  = data.program_error   || "";
+  const stderr        = compileError || runtimeError;
+  const exitCode      = data.status ?? 0;
 
   return {
     stdout,
     stderr,
-    status: { description: exitCode === 0 ? "Accepted" : "Runtime Error" }
+    status: { description: exitCode === 0 ? "Accepted" : (compileError ? "Compilation Error" : "Runtime Error") }
   };
 }
 
@@ -415,13 +429,12 @@ async function judge0Run(sourceCode, languageId) {
   throw new Error("Execution timed out");
 }
 
-// ── Universal run helper – tries Piston first, Judge0 if key is set ──────────
+// ── Universal run helper – Wandbox primary, Judge0 if key is set ─────────────
 async function runCode(sourceCode, langName) {
-  // If user has a RapidAPI key, use Judge0 for potentially more accurate results
   if (RAPIDAPI_KEY) {
     return judge0Run(sourceCode, LANG_IDS[langName]);
   }
-  return pistonRun(sourceCode, langName);
+  return wandboxRun(sourceCode, langName);
 }
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -454,7 +467,6 @@ function renderProjectCards() {
   const grid = document.getElementById("projectsGrid");
   if (!grid) return;
 
-  // Filter by lang field (not tags) so the C / C++ / Python buttons work correctly
   const filtered = currentFilter === "All"
     ? projects
     : projects.filter(p => p.lang === currentFilter);
@@ -464,8 +476,14 @@ function renderProjectCards() {
     return;
   }
 
-  grid.innerHTML = filtered.map(p => `
-    <div class="glass-card project-card">
+  grid.innerHTML = filtered.map(p => {
+    const runUrl   = getRunUrl(p.lang, p.colab, p.onlinegdb);
+    const runIcon  = p.lang === "Python" ? "🚀 Open in Colab" : "⚡ Run on OnlineGDB";
+    const runClass = p.lang === "Python" ? "project-link-btn project-link-colab" : "project-link-btn project-link-gdb";
+
+    return `
+    <div class="glass-card project-card project-card--clickable"
+         onclick="window.open('${escHtml(runUrl || p.github || "#")}','_blank')">
       <div class="project-card-header">
         <h4>${escHtml(p.title)}</h4>
         <span class="lang-badge">${escHtml(p.lang)}</span>
@@ -475,10 +493,12 @@ function renderProjectCards() {
         ${p.tags.map(t => `<span>${escHtml(t)}</span>`).join("")}
       </div>
       <div class="project-links">
-        ${p.github ? `<a href="${escHtml(p.github)}" target="_blank" rel="noopener" class="project-link-btn">🐙 GitHub</a>` : ""}
-        ${p.demo   ? `<a href="${escHtml(p.demo)}"   target="_blank" rel="noopener" class="project-link-btn">🚀 Live Demo</a>` : ""}
+        ${runUrl ? `<a href="${escHtml(runUrl)}" target="_blank" rel="noopener" class="${runClass}" onclick="event.stopPropagation()">${runIcon}</a>` : ""}
+        ${p.github ? `<a href="${escHtml(p.github)}" target="_blank" rel="noopener" class="project-link-btn" onclick="event.stopPropagation()">🐙 GitHub</a>` : ""}
+        ${p.demo   ? `<a href="${escHtml(p.demo)}"   target="_blank" rel="noopener" class="project-link-btn" onclick="event.stopPropagation()">🌐 Demo</a>` : ""}
       </div>
-    </div>`).join("");
+    </div>`;
+  }).join("");
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -650,7 +670,7 @@ async function runCompiler() {
 
   if (!output || !btn) return;
 
-  if (!PISTON_LANGS[lang]) { output.textContent = "⚠️ Language not supported."; return; }
+  if (!WANDBOX_COMPILERS[lang]) { output.textContent = "⚠️ Language not supported."; return; }
 
   btn.disabled    = true;
   btn.textContent = "⏳ Running…";

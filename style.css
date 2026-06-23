@@ -522,3 +522,42 @@ ul { list-style: none; }
   transform: translateY(-1px);
   color: #0a0a0f !important;
 }
+
+/* ============================
+   CLICKABLE PROJECT CARDS
+============================ */
+.project-card--clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.project-card--clickable:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(56, 189, 248, 0.18);
+}
+.project-card--clickable:active {
+  transform: translateY(-1px);
+}
+
+/* ============================
+   RUN ONLINE BUTTONS
+============================ */
+.project-link-colab {
+  background: linear-gradient(135deg, #f9ab00, #e37400) !important;
+  color: #fff !important;
+  font-weight: 700;
+  border: none !important;
+}
+.project-link-colab:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+.project-link-gdb {
+  background: linear-gradient(135deg, #38bdf8, #6366f1) !important;
+  color: #fff !important;
+  font-weight: 700;
+  border: none !important;
+}
+.project-link-gdb:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
